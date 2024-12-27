@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Automation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      margin-top: 20px;
+    }
+    input[type="file"], input[type="text"], button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Email Automation</h1>
+  <form id="emailForm">
+    <label for="subject">Email Subject:</label>
+    <input type="text" id="subject" name="subject" placeholder="Enter subject" required>
+    <label for="spreadsheet">Upload Spreadsheet:</label>
+    <input type="file" id="spreadsheet" name="spreadsheet" accept=".xlsx" required>
+    <button type="submit">Send Emails</button>
+    <p id="responseMessage"></p>
+  </form>
+  
+
+  <script>
+    const form = document.getElementById('emailForm');
+    const responseMessage = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form); // Collect the form data
+        try {
+            const response = await fetch('http://127.0.0.1:5000/send-emails', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                responseMessage.textContent = 'Emails sent successfully!';
+                responseMessage.className = 'success';
+            } else {
+                const error = await response.text();
+                responseMessage.textContent = `Error: ${error}`;
+                responseMessage.className = 'error';
+            }
+        } catch (error) {
+            responseMessage.textContent = `Error: ${error.message}`;
+            responseMessage.className = 'error';
+        }
+    });
+</script>
+
+</body>
+</html>
